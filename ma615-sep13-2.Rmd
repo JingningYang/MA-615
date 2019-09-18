@@ -1,6 +1,6 @@
 ---
 title: "Class Assignment: MPG tables and charts"
-author: "MA615"
+author: "Jinginng Yang"
 date: "September 9, 2019"
 output: pdf_document
 ---

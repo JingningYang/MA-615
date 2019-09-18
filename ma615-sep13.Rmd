@@ -45,10 +45,13 @@ class <- unique(mpg$class)      ## define a vector for car classes
 cty_mean <- rep(0, length(class))  ## define variables to hold mean mileage
 hwy_mean <- rep(0,length(class))   ## for each class of car
 
-for(i in 1:length(class)){                          ## calculate the mean city and 
-  cty_mean[i] = mean(mpg$cty[mpg$class==class[i]])  ## highway mileage for each 
-  hwy_mean[i] = mean(mpg$hwy[mpg$class==class[i]])  ## class of car
-}
+#for(i in 1:length(class)){                          ## calculate the mean city and 
+#  cty_mean[i] = mean(mpg$cty[mpg$class==class[i]])  ## highway mileage for each 
+#  hwy_mean[i] = mean(mpg$hwy[mpg$class==class[i]])  ## class of car
+#}
+
+cty_mean = tapply(mpg$cty, mpg$class, mean)
+hwy_mean = tapply(mpg$hwy, mpg$class, mean)
 
 cty_mean <- round(cty_mean, 2)                      ## round the results to 2 decimal pla
 hwy_mean <- round(hwy_mean, 2)

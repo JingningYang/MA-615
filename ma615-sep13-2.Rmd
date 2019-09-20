@@ -60,7 +60,7 @@ kable(tbl_1, format = "latex", booktabs=TRUE, digits = 2,     ## call kable to m
       caption = "Mean City and Highway MPG by Car Class" )      
 
 
-
+knitr::kable(tbl_1)
 
 
 
@@ -156,6 +156,8 @@ kable(tbl_2, digits = 2, format = "latex", booktabs=TRUE, ,caption = "Top 3 MPG 
                      "Highway 1999"=2,
                      "City 2008"=2,
                    "Highway 2008"=2))
+                   
+knitr::kable(tbl_2)
 
 ```
 

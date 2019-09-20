@@ -163,7 +163,7 @@ knitr::kable(tbl_2)
 
 ## Plot 1 {.smaller}
 
-```{r echo=FALSE}
+```{r echo=FALSE,message=FALSE}
 
 
 library(ggplot2)
@@ -179,7 +179,7 @@ ggplot(mpg) +
 
 ## Plot 2  {.smaller}
 
-```{r echo=FALSE}
+```{r echo=FALSE,message=FALSE}
 
  ggplot(mpg) +
  aes(x = displ, y = hwy) +

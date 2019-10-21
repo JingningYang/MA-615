@@ -1,0 +1,127 @@
+---
+title: "615 Midterm Project"
+author: "Jingning Yang"
+date: "10/17/2019"
+output: 
+    pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Read the "World Value" data
+
+```{r cars}
+library(readxl)
+data <- read_excel("/Users/jingningyang/Desktop/F00007693-WV6_Data_United_States_2011_Excel_v20180912.xlsx")
+```
+
+## Clean Data
+
+Delete columns which has replicated values(non-information):
+```{r , echo=FALSE}
+newdata <- data[vapply(data, function(x) length(unique(x)) > 1, logical(1L))]
+```
+
+After we delete non-information columns, based on different data structure, we only select totally has 4 options and sounds relative to each other: I pick V4-9, V60, V62, V64 from about 298 variables(survey questions).    
+
+Convert selected survey questions from character to numeric:
+```{r}
+x <- c(1:8,57,59,61) #57,59,61,,99:104
+newdata[x] <- apply(newdata[x],2,function(x) as.numeric(as.factor(x)))
+```
+
+## Preparation for factor analysis    
+Calculate correlations between selected survey questions:
+```{r}
+matrix <- cor(newdata[x])
+head(round(matrix,2))
+
+library(psych)
+cortest.bartlett(newdata[x]) 
+
+det(matrix) 
+
+```
+From output data, Bartlett's test is highly significant, assymptotically chisquare is 2273, and P-value of chi square smaller than 0.001, therefore factor analysis is appropriate.    
+And since the determinant is 0.36 larger than 0.00001, so our determinant does not seem problematic. 
+
+Since my goal is reduce number of variables(selected survey questions) in my data by extracting important one from the data, thus, I will using PCA to do factor extraction.
+
+## Factor extraction by using PCA:
+
+Show scree Plot by using parallel analysis:
+```{r}
+pc <- principal(newdata[x], nfactors = 11, rotate="none")
+#using a bigger device window explicitly showing the graph:
+#dev.new(width=10, height=10) 
+parallel <- fa.parallel(newdata[x], fm='minres', fa='fa', main = "Scree Plot")
+
+```
+From the parallel analysis, the plot shows from 2 to 6 will be great choice.
+
+scree plot by using another way:
+```{r}
+plot(pc$values, type="b", main = "Scree Plot") 
+#x axis: component number
+#y axis:eigenvalues of principal components and factor analysis
+```
+
+Since the elbow part is about the 3rd point from the left, so the evidence from the scree plot and from the eigenvalues suggests 3 component solution may be the best.
+Thus, combining 2 graphs, we choose 3 as our number of factors.
+
+Redo PCA by using 3 factors
+```{r}
+pc2 <- principal(newdata[x], nfactors = 3, rotate="none")
+pc2
+```
+Through output data, Cumulative var shows these 3 principle components explains 44% data with 11 variables.
+
+```{r}
+#Difference between the reproduced cor matrix and the original cor matrix
+residuals <- factor.residuals(matrix, pc2$loadings)
+residuals <- as.matrix(residuals[upper.tri(residuals)])
+large.resid <- abs(residuals) > 0.05
+#proportion of the large residuals
+sum(large.resid) / nrow(residuals) #0.58
+```
+
+For easier to explain the output of factor extraction, we can using orthogonal rotation to decreasing noice for factors as much as possible.
+
+Orthogonal rotation(varimaax):
+```{r}
+pc3 <- principal(newdata[x], nfactors = 3, rotate = "varimax")
+print.psych(pc3, cut=0.3, sort = TRUE, main="table after orthogonal rotation") 
+#cut=0.3:only loading above 0.3, otherwise correlation is not high enough, so we consider excluding them.
+```
+According to the results and the questionnaires, We can find the questions that load highly on factor 1 are V4("Important in life:Family") with the highest loading of 0.71, and lowest loading of 0.4 is V10(Feeling of happiness). Factor 2 are mianly explained by V64(Most important:first choice) and V60(Aim of country:first choice) with loading of 0.76 and 0.75. Factor 3 are mainly explained by V11(state of health) with 0.86 and the loweest loading of 0.64 is V10(Feeling of happiness).
+
+Based on the obsersation, we can summarize the factor 1 as hapiness people consider a lot are important in life and label factor 2 as the expectation from people to country, factor 3 as causes of healthy people. 
+
+Since all facto1, factor2 and factor3's data are below 0.8 and over 0.3, which is encouraging.
+
+```{r}
+library(gplots)
+library(ggplot2)
+library(RColorBrewer)
+fa.diagram(pc3,simple=TRUE)
+#dev.new(width=10, height=10)
+#biplot(princomp(newdata[x]))# only plot pincipal components 1 vs 2
+
+```
+
+## Ploting PCA
+```{r}
+library(ggfortify)
+autoplot(prcomp(newdata[x]), scale=0)
+```
+```{r}
+library(cluster)
+library(fpc)
+clus <- kmeans(newdata[x], centers = 3)
+#dev.new(width=10, height=10)
+plotcluster(newdata[x], clus$cluster)
+clusplot(newdata[x], clus$cluster, color = TRUE, shade = TRUE, labels = 3, lines = 0)
+```
+

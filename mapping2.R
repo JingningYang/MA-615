@@ -16,7 +16,7 @@ library(tidyverse)
 library(leaflet.extras)
 library(DT)
 
-data <- read.csv("/Users/jingningyang/Desktop/restaurant.csv")
+data <- read.csv("restaurant.csv")
 Data <- filter(data, Latitude != 0 & Longitude != 0)
 
 ui <- fluidPage(

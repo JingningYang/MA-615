@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r cars}
 library(readxl)
-data <- read_excel("/Users/jingningyang/Desktop/F00007693-WV6_Data_United_States_2011_Excel_v20180912.xlsx")
+data <- read_excel("F00007693-WV6_Data_United_States_2011_Excel_v20180912.xlsx")
 ```
 
 ## Clean Data

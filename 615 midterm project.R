@@ -71,7 +71,7 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output, session) {
     #Read data and numeric selected columns:
-    data <- read_excel("/Users/jingningyang/Desktop/F00007693-WV6_Data_United_States_2011_Excel_v20180912.xlsx")
+    data <- read_excel("F00007693-WV6_Data_United_States_2011_Excel_v20180912.xlsx")
     newdata <- data[vapply(data, function(x) length(unique(x)) > 1, logical(1L))]
     x <- c(1:8,57,59,61)
     newdata[x] <- apply(newdata[x],2,function(x) as.numeric(as.factor(x)))
